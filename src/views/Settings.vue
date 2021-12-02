@@ -1,0 +1,45 @@
+<template>
+  <v-container class="px-10">
+    <NavSetting />
+    <span v-if="!islogin"> Please login for settings </span>
+    <!-- <UserSetting />
+    <ComponentSetting />
+    <EBASSetting />
+    <DEHMSetting />
+    <ThemeSetting /> -->
+
+    <div v-else>
+      <UserSetting v-if="ui_control.curr_setting_view==='User'"/>
+      <ComponentSetting v-if="ui_control.curr_setting_view==='Components'"/>
+      <EBASSetting v-if="ui_control.curr_setting_view==='EBAS Database'"/>
+      <DEHMSetting v-if="ui_control.curr_setting_view==='DEHM Preprocess'"/>
+      <ThemeSetting v-if="ui_control.curr_setting_view==='APP Theme'"/>
+    </div>
+  </v-container>
+</template>
+
+<script>
+import { mapState, mapMutations } from "vuex";
+
+export default {
+  name: "Settings",
+  data: () => ({}),
+  computed: {
+    ...mapState({
+      app_data: "app_data",
+      ui_control: "ui_control",
+    }),
+    islogin() {
+      return this.app_data.user.isLogin;
+    },
+  },
+  methods: {
+    ...mapMutations([]),
+  },
+};
+</script>
+<style scoped lang="scss">
+// .v-divider {
+//   border-color: rgba(0, 0, 0, 0.12) !important;
+// }
+</style>

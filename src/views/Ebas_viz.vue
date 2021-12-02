@@ -1,8 +1,6 @@
 <template>
   <v-container class="px-10">
-    <span v-if="!app_data.user.isLogin">
-      this is homepage, introduction goes here.
-    </span>
+    <EBAS />
   </v-container>
 </template>
 
@@ -10,7 +8,7 @@
 import { mapState, mapMutations } from "vuex";
 
 export default {
-  name: "Home",
+  name: "ebas viz",
   computed: {
     ...mapState({
       app_data: "app_data",

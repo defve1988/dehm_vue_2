@@ -1,32 +1,62 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+  <v-app>
+    <AppBar />
+    <NavHome />
+    <v-main :style="`background-color:${ui_control.theme_color.app_bg}`">
+      <router-view />
+    </v-main>
+    <LoginRegister />
+    <Message />
+    <!-- <Footer /> -->
+  </v-app>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+<script>
+import { mapState, mapMutations } from "vuex";
+
+export default {
+  name: "App",
+  data: () => ({
+    //
+  }),
+  computed: {
+    ...mapState({
+      app_data: "app_data",
+      ui_control: "ui_control",
+    }),
+  },
+  async mounted() {
+    this.ui_control.isloading = true;
+    this.SET_THEME();
+    let response = await this.app_data.ebas.get_site_list(
+      this.app_data.headers
+    );
+    if (response.code != 0) {
+      this.SET_MESSAGE(response);
+    }
+    this.ui_control.isloading = false;
+  },
+
+  methods: {
+    ...mapMutations(["SET_THEME"]),
+  },
+  watch: {},
+};
+</script>
+<style lang="scss">
+html {
+  scroll-behavior: smooth;
+}
+::-webkit-scrollbar {
+  width: 7px;
+}
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.8);
 }
 
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
 </style>
