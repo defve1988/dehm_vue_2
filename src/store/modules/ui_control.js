@@ -17,17 +17,21 @@ const state = {
 
    isloading: false,
    register_dialog: false,
-   new_component_dialog: true,
+   new_component_dialog: false,
 
-   new_component_dialog_content:{
-      key_name:"",
-      long_name:"",
-      target_unit:[],
-      DEHM:[],
-      EBAS:[]
+   new_component_dialog_content: {
+      key_name: "",
+      long_name: "",
+      target_unit: [],
+      DEHM: [],
+      EBAS: []
    },
 
-   user_color_list:[],
+   user_color_list: ["#c82828CC"],
+   components: [
+      { c: null, text: null }
+   ],
+   tab_height:700,
 
    snackbar: {
       show: true,
@@ -36,11 +40,11 @@ const state = {
    },
    curr_setting_view: "User",
    home_view: [
-      { text: "Documents", icon: "mdi-file-document-outline",router:"documents" },
-      { text: "EBAS Visualization", icon: "mdi-chart-timeline-variant",router:"ebas_viz" },
-      { text: "DEHM Visualization", icon: "mdi-earth",router:"dehm_viz" },
-      { text: "DEHM Evaluations", icon: "mdi-chart-multiple",router:"dehm_eval" },
-      { text: "App Settings", icon: "mdi-cog",router:"settings" },
+      { text: "Documents", icon: "mdi-file-document-outline", router: "documents" },
+      { text: "EBAS Visualization", icon: "mdi-chart-timeline-variant", router: "ebas_viz" },
+      { text: "DEHM Visualization", icon: "mdi-earth", router: "dehm_viz" },
+      { text: "DEHM Evaluations", icon: "mdi-chart-multiple", router: "dehm_eval" },
+      { text: "App Settings", icon: "mdi-cog", router: "settings" },
    ],
 
    setting_view: [
@@ -118,6 +122,24 @@ const mutations = {
          text: res.msg,
          color: res.code == 0 ? "success" : "error",
       };
+   },
+
+   SET_UI_FROM_USER(stat, user) {
+      // set user's color
+      stat.user_color_list = user.color_list
+
+      // set user's component
+      let names = [];
+      for (const [key, value] of Object.entries(
+         user.components
+      )) {
+         names.push({
+            c: key,
+            text: `${key} (${value.name})`,
+         });
+      }
+      stat.components = names
+
    }
 };
 

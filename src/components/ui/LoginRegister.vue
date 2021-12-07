@@ -76,7 +76,7 @@ export default {
     }),
   },
   methods: {
-    ...mapMutations(["SET_MESSAGE"]),
+    ...mapMutations(["SET_MESSAGE","SET_UI_FROM_USER"]),
     async register() {
       this.isLoading = true;
       let response = await this.app_data.user.register(
@@ -85,7 +85,7 @@ export default {
       );
       if (response.code == 0) {
         this.ui_control.register_dialog = false;
-        this.ui_control.user_color_list = this.app_data.user.color_list
+        this.SET_UI_FROM_USER(this.app_data.user)
       }
       this.isLoading = false;
       this.SET_MESSAGE(response);
@@ -98,7 +98,7 @@ export default {
       );
       if (response.code == 0) {
         this.ui_control.register_dialog = false;
-        this.ui_control.user_color_list = this.app_data.user.color_list
+        this.SET_UI_FROM_USER(this.app_data.user)
       }
       this.isLoading = false;
       this.SET_MESSAGE(response);

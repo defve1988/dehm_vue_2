@@ -19,9 +19,13 @@ import NewComponent from './chemicals/new_component.vue'
 
 
 import EBAS from './ebas/EBAS.vue'
-// import EBASQuery from './ebas/EBAS_query.vue'
-// import EBASPlot from './ebas/EBAS_plot.vue'
-// import EBASMap from './ebas/EBAS_map.vue'
+import EBASQuery from './ebas/EBAS_query.vue'
+import EBASPlot from './ebas/EBAS_plot.vue'
+import EBASMap from './ebas/EBAS_map.vue'
+
+import EditableTable from './ui/editable_table.vue'
+
+
 
 const installObj = {
   // install component
@@ -32,6 +36,7 @@ const installObj = {
     Vue.component('LoginRegister', LoginRegister)
     Vue.component('Message', Message)
     Vue.component('Footer', Footer)
+    Vue.component('EditableTable', EditableTable)
     
     // app nav bar
     Vue.component('NavHome', NavHome)
@@ -51,9 +56,9 @@ const installObj = {
 
     // EBAS viz 
     Vue.component('EBAS', EBAS)
-    // Vue.component('EBASQuery', EBASQuery)
-    // Vue.component('EBASPlot', EBASPlot)
-    // Vue.component('EBASMap', EBASMap)
+    Vue.component('EBASQuery', EBASQuery)
+    Vue.component('EBASPlot', EBASPlot)
+    Vue.component('EBASMap', EBASMap)
   }
 }
 

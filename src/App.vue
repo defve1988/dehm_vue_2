@@ -31,9 +31,11 @@ export default {
     let response = await this.app_data.ebas.get_site_list(
       this.app_data.headers
     );
+    this.app_data.ebas.init_selections();
     if (response.code != 0) {
       this.SET_MESSAGE(response);
     }
+
     this.ui_control.isloading = false;
   },
 
@@ -58,5 +60,4 @@ html {
   border-radius: 8px;
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.8);
 }
-
 </style>

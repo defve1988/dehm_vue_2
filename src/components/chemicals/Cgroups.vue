@@ -140,7 +140,7 @@ import { mapState, mapMutations } from "vuex";
 export default {
   name: "cgroups",
   data: () => ({
-    selectedItem: 1,
+    selectedItem: 0,
     show_edit: false,
     new_group: false,
     new_group_name: "",
@@ -215,7 +215,8 @@ export default {
         components: this.new_group_c,
       };
       this.app_data.user.c_groups.push(new_group);
-      this.selectedItem = this.app_data.user.c_groups.length - 1;
+      this.selectedItem = 1;
+      this.selectedItem = 0;
     },
   },
 };

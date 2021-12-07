@@ -1,6 +1,6 @@
 <template>
   <v-card
-    height="600"
+    :height="ui_control.tab_height"
     class="px-5"
     :dark="ui_control.theme.dark"
     :style="`background-color:${ui_control.theme_color.card_bg}`"
@@ -46,7 +46,7 @@
               @click="select_all(sel.key)"
             ></v-checkbox>
           </v-subheader>
-          <v-list subheader dense class="pt-0 mt-0" height="225" outlined>
+          <v-list subheader dense class="pt-0 mt-0" :height="list_hight" outlined>
             <v-list-item-group v-model="selection[sel.key].val" multiple dense>
               <template v-for="(item, i) in selection[sel.key].item">
                 <v-list-item
@@ -78,7 +78,6 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
-import EbasQuery from "@/app_class/ebas_query";
 
 export default {
   name: "ebas_query",
@@ -86,6 +85,7 @@ export default {
     isLoading: false,
     use_ebas: true,
     use_id: true,
+    list_hight:275,
     selection_list: [
       { title: "Sites", key: "site" },
       { title: "Components", key: "component" },
@@ -96,28 +96,16 @@ export default {
       { title: "Station Setting", key: "station_setting" },
       { title: "*Resolution", key: "resolution" },
     ],
-
-    selection: {
-      site: { item: [], val: [], all: false },
-      component: { item: [], val: [], all: false },
-      matrix: { item: [], val: [], all: false },
-      country: { item: [], val: [], all: false },
-      land_use: { item: [], val: [], all: false },
-      station_setting: { item: [], val: [], all: false },
-      year: { item: [], val: [], all: false },
-      resolution: { item: [], val: [], all: false },
-    },
   }),
-  mounted() {
-    this.ebas_selection = new EbasQuery(this.app_data.ebas_site_list);
-    this.selection = this.ebas_selection.selection;
-  },
   watch: {},
   computed: {
     ...mapState({
       app_data: "app_data",
       ui_control: "ui_control",
     }),
+    selection() {
+      return this.app_data.ebas.selection;
+    },
   },
   methods: {
     ...mapMutations(["SET_MESSAGE"]),
@@ -136,66 +124,29 @@ export default {
       }
     },
     filter_ebas() {
-      this.ebas_selection.filter_ebas(this.selection);
-      this.selection = this.ebas_selection.selection;
+      this.app_data.ebas.filter_ebas(this.selection);
+      this.selection = this.app_data.ebas.selection;
     },
     reset_selection() {
-      this.ebas_selection.reset_selection();
-      this.selection = this.ebas_selection.selection;
+      this.app_data.ebas.reset_selection();
+      this.selection = this.app_data.ebas.selection;
     },
     async query_example() {
-      // let query_condition = {
-      //   // id: ["AM0001R", "EE0009R", "ES0010R", "ES0011R","DK0010G"],
-      //   component: ["NOx", "nitrate"],
-      //   matrix: ["air", "aerosol"],
-      //   st: "2020-01-01",
-      //   ed: "2020-12-01",
-      // };
-      this.selection = {
-        site: { item: [], val: [], all: false },
-        component: {
-          item: ["NOx", "nitrate"],
-          val: ["NOx", "nitrate"],
-          all: true,
-        },
-        matrix: {
-          item: ["air", "aerosol"],
-          val: ["air", "aerosol"],
-          all: true,
-        },
-        country: { item: [], val: [], all: false },
-        land_use: { item: [], val: [], all: false },
-        station_setting: { item: [], val: [], all: false },
-        year: { item: ["2020"], val: ["2020"], all: true },
-        resolution: { item: [], val: [], all: false },
-      };
-      this.ebas_selection.filter_ebas(this.selection);
-      this.selection = this.ebas_selection.selection;
+      this.app_data.ebas.query_example();
       await this.query_data();
     },
+
     async query_data() {
       this.ui_control.isloading = true;
+
       this.select_all_curr();
-      let query_condition = this.ebas_selection.selection2query(this.selection);
-      console.log(query_condition)
-      let headers = this.app_data.headers;
-      var bodyFormData = new FormData();
-      bodyFormData.append("user_name", this.app_data.user.user_name);
-      bodyFormData.append("password", this.app_data.user.password);
-      bodyFormData.append("query_condition", JSON.stringify(query_condition));
+      let response = await this.app_data.ebas.query_data(
+        this.selection,
+        this.app_data.user.create_form(),
+        this.app_data.headers
+      );
 
-      let response = await this.$http.post("/ebas/query", bodyFormData, {
-        headers: headers,
-        withCredentials: true,
-      });
-
-      if (response.data.code == 0) {
-        let res_data = JSON.parse(response.data.data);
-        this.app_data.ebas_viz_data = res_data;
-      }
-
-      // console.log(response)
-      this.SET_MESSAGE(response.data);
+      this.SET_MESSAGE(response);
       this.ui_control.isloading = false;
     },
   },

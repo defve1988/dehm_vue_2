@@ -12,10 +12,7 @@
 
     TODO:
     <ul>
-      <li>Function to allow edit components</li>
-      <li>Add, del, components</li>
-      <li>Show and edit the units, converting factors</li>
-      <li>Show and edit the units, converting factors</li>
+      <li>...</li>
     </ul>
     Bugs:
     <ul>

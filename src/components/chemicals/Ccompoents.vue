@@ -13,7 +13,7 @@
         <v-subheader class="pt-0 mt-0 px-3" dark>
           Components
           <v-spacer></v-spacer>
-          <v-btn icon x-small @click="add_new_c">
+          <v-btn icon x-small @click="ui_control.new_component_dialog = true">
             <v-icon> mdi-plus </v-icon>
           </v-btn>
         </v-subheader>
@@ -144,6 +144,17 @@
     >
       Save Changes
     </v-btn>
+
+    <v-btn
+      small
+      class="ma-0 mb-5 ml-4"
+      @click="del_c"
+      color="red"
+      :dark="!ui_control.theme.dark"
+    >
+      Delete Selected Component
+    </v-btn>
+
     <NewComponent />
   </v-container>
 </template>
@@ -165,20 +176,11 @@ export default {
     }),
 
     components() {
-      let names = [];
-      for (const [key, value] of Object.entries(
-        this.app_data.user.components
-      )) {
-        names.push({
-          c: key,
-          text: `${key} (${value.name})`,
-        });
-      }
-      console.log(names)
-      return names;
+      return this.ui_control.components;
     },
 
     target_units() {
+      // note: if you delete a item, index will become undefined, remember to reset index
       let c = this.components[this.selectedItem].c;
       return this.app_data.user.components[c]["target_unit"];
     },
@@ -221,13 +223,35 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["SET_MESSAGE"]),
-    add_new_c(){
-       this.ui_control.new_component_dialog=true
+    ...mapMutations(["SET_MESSAGE", "SET_UI_FROM_USER"]),
+    del_c() {
+      let selected_c = this.components[this.selectedItem];
+      var answer = window.confirm(`Are you sure to delete ${selected_c.c}?`);
+      if (answer) {
+        delete this.app_data.user.components[selected_c.c];
+        this.SET_UI_FROM_USER(this.app_data.user);
+        this.selectedItem = 0;
+        this.ui_control.snackbar = {
+          show: true,
+          text: `Component ${selected_c.c} is deleted.`,
+          color: "warning",
+        };
+      }
     },
-    async save_changes(){
+    async save_changes() {
+      await this.update_user("components");
+    },
+    async update_user(field) {
+      this.ui_control.isloading = true;
 
-    }
+      let response = await this.app_data.user.update_field(
+        field,
+        this.app_data.headers
+      );
+
+      this.SET_MESSAGE(response);
+      this.ui_control.isloading = false;
+    },
   },
 };
 </script>

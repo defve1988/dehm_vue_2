@@ -1,6 +1,5 @@
-import plotly_fig from "./src/plotly_fig"
+import TS from "./src/ts"
 
-export default class {
-
+export default class extends TS {
 
 }

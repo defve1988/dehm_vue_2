@@ -2,11 +2,6 @@
   <v-container class="px-10">
     <NavSetting />
     <span v-if="!islogin"> Please login for settings </span>
-    <!-- <UserSetting />
-    <ComponentSetting />
-    <EBASSetting />
-    <DEHMSetting />
-    <ThemeSetting /> -->
 
     <div v-else>
       <UserSetting v-if="ui_control.curr_setting_view==='User'"/>

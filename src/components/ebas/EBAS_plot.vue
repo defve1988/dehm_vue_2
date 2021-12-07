@@ -1,6 +1,6 @@
 <template>
   <v-card
-    height="600"
+    :height="ui_control.tab_height"
     class="pa-5"
     :dark="ui_control.theme.dark"
     :style="`background-color:${ui_control.theme_color.card_bg}`"
@@ -94,6 +94,7 @@
           </v-col>
         </v-row>
       </v-col>
+
       <v-col cols="1" class="pa-0" align="center">
         <v-row class="pa-0 ma-0" justify="center">
           <v-radio-group v-model="gathering_method">
@@ -107,8 +108,8 @@
           </v-radio-group>
         </v-row>
 
-        <v-row class="pa-0 my-3" justify="center">
-          <v-btn @click="new_plot"> >> </v-btn>
+        <v-row class="pa-0 my-3 mt-15" justify="center">
+          <v-btn @click="new_plot" :dark="!ui_control.theme.dark"> >> </v-btn>
         </v-row>
       </v-col>
 
@@ -116,16 +117,17 @@
         <v-row>
           <v-col cols="4" class="mt-2 mx-2 pa-0">
             <v-combobox
-              v-model="fig_type_selected"
-              :items="fig_types"
-              label="Figure Type"
+              v-model="avg_type_selected"
+              :items="avg_types"
+              @change="new_plot"
+              label="Averaging"
               class="py-3 px-8"
               outlined
               dense
               hide-details
             ></v-combobox>
           </v-col>
-      
+
           <v-col cols="4" class="mt-2 mx-2 pa-0">
             <v-combobox
               v-model="fig_type_selected"
@@ -138,7 +140,6 @@
               hide-details
             ></v-combobox>
           </v-col>
-
         </v-row>
 
         <v-row>
@@ -146,7 +147,7 @@
             <div
               ref="ebas_viz_plot"
               id="ebas_viz_plot"
-              style="height: 500px"
+              :style="`height: ${plot_height}px`"
             ></div>
           </v-col>
         </v-row>
@@ -159,9 +160,8 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
-import Viz from "@/app_class/app_plots";
-import TS from "@/app_class/gene_ts";
-// import Plotly from "plotly.js-dist"
+import Viz from "@/app_class/viz";
+import TS from "@/app_class/ts";
 
 export default {
   name: "ebas_plot",
@@ -169,9 +169,12 @@ export default {
     isLoading: false,
     selected_site: [],
     selected_component: [],
-    list_height: 240,
-    fig_types: ["Hourly", "Daily", "Monthly"],
-    fig_type_selected: "Hourly",
+    list_height: 285,
+    plot_height:600,
+    avg_types: ["Hourly", "Daily", "Monthly"],
+    fig_types: ["TS-Scatter", "TS-Line", "TS-Bar", "TS-ErrorBar", "TS-Box", "Scatter", "Histogram"],
+    avg_type_selected: "Hourly",
+    fig_type_selected: "TS-Scatter",
     gathering_method: 0,
     gathering_methods: ["None", "Mean", "Median", "Max", "Min"],
     is_select_all_site: false,
@@ -184,7 +187,7 @@ export default {
     plot.div = "ebas_viz_plot";
     plot.title = "EBAS data";
     plot.layout.width = this.$refs.ebas_viz_plot.clientWidth;
-    plot.layout.height = 450;
+    plot.layout.height = this.plot_height-50;
 
     this.data_viz.init_config(plot);
     this.data_viz.plot_obj.gen_scatter([]);
@@ -194,18 +197,15 @@ export default {
       app_data: "app_data",
       ui_control: "ui_control",
     }),
-    progress_val() {
-      return this.ts.progress_val;
-    },
     site_index() {
-      if (this.app_data.ebas_viz_data == null) return [];
-      let site = this.app_data.ebas_viz_data.data.map((x) => x.site);
+      if (this.app_data.ebas.data == null) return [];
+      let site = this.app_data.ebas.data.data.map((x) => x.site);
       site = [...new Set(site)];
       return site;
     },
     component_index() {
-      if (this.app_data.ebas_viz_data == null) return [];
-      let component = this.app_data.ebas_viz_data.data.map((x) => x.component);
+      if (this.app_data.ebas.data == null) return [];
+      let component = this.app_data.ebas.data.data.map((x) => x.component);
       component = [...new Set(component)];
       return component;
     },
@@ -226,9 +226,7 @@ export default {
         this.selected_component = [];
       }
     },
-    async change_fig_type(){
-
-    },
+    async change_fig_type() {},
     async new_plot() {
       this.ui_control.isloading = true;
       this.data_viz.set_color_theme(this.app_data.user.color_list);
@@ -236,16 +234,14 @@ export default {
       // console.log(this.selected_site, this.selected_component);
 
       await this.ts.gene_ts(
-        this.app_data.ebas_viz_data.data,
+        this.app_data.ebas.data.data,
         this.selected_site,
         this.selected_component
       );
 
-      await this.ts.gather_ts(
-        this.gathering_methods[this.gathering_method]
-      );
+      await this.ts.gather_ts(this.gathering_methods[this.gathering_method]);
 
-      var data = await this.ts.averaging_ts(this.fig_type_selected)
+      var data = await this.ts.averaging_ts(this.fig_type_selected);
       // // console.log(data)
 
       this.data_viz.plot_obj.gen_scatter(data);
