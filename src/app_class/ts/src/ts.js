@@ -8,7 +8,10 @@ import {
 
 export default class {
    constructor() {
-      
+      this.ts = null
+      this.ts_gathered = null
+      this.ts_averaged = null
+
    }
    // 1. generate array of time series combinations stored as ts
    // 2. convert unit
@@ -63,7 +66,7 @@ export default class {
                // unit: null,
                method: method,
                component: c,
-               y_name: c + ", " + method 
+               y_name: c + ", " + method
             })
          }
       }
@@ -72,25 +75,25 @@ export default class {
       return Promise.resolve(this.ts_gathered)
    }
 
-   async averaging_ts(method){
+   async averaging_ts(method) {
       // method: "Hourly", "Daily", "Weakly", "Monthly"
 
       console.log(this.ts_gathered, method)
-      this.ts_averaged=[]
-      this.ts_gathered.forEach(ts=>{
-         var xx={}
-         ts.x.forEach((ts_x, index)=>{
+      this.ts_averaged = []
+      this.ts_gathered.forEach(ts => {
+         var xx = {}
+         ts.x.forEach((ts_x, index) => {
             let converted_ts_x = this._convert_date_string(ts_x, method)
-            if (converted_ts_x in xx){
+            if (converted_ts_x in xx) {
                xx[converted_ts_x].push(ts.y[index])
             }
-            else{
-               xx[converted_ts_x]=[ts.y[index]]
+            else {
+               xx[converted_ts_x] = [ts.y[index]]
             }
          })
 
-         let x=[]
-         let y=[]
+         let x = []
+         let y = []
 
          for (const [key, value] of Object.entries(xx)) {
             let val = value.filter(v => v != null)
@@ -102,9 +105,9 @@ export default class {
             }
             y.push(val)
             x.push(key)
-          }
+         }
 
-          this.ts_averaged.push({
+         this.ts_averaged.push({
             x: x,
             y: y,
             // unit: null,
@@ -118,18 +121,18 @@ export default class {
 
    }
 
-   _convert_date_string(ts_x, method){
-   // time string: '2020-01-01T06:00:00.000Z'
+   _convert_date_string(ts_x, method) {
+      // time string: '2020-01-01T06:00:00.000Z'
       let res
       switch (method) {
          case "Hourly":
-            res=ts_x.slice(0,13)
+            res = ts_x.slice(0, 13)
             break;
          case "Daily":
-            res=ts_x.slice(0,10)
+            res = ts_x.slice(0, 10)
             break;
          case "Monthly":
-            res=ts_x.slice(0,7)
+            res = ts_x.slice(0, 7)
             break;
       }
       return res
@@ -145,17 +148,17 @@ export default class {
       let xx = {}
       tss.forEach(ts => {
          ts.x.forEach((ts_x, index) => {
-            if (ts_x in xx){
+            if (ts_x in xx) {
                xx[ts_x].push(ts.y[index])
             }
-            else{
-               xx[ts_x]=[ts.y[index]]
+            else {
+               xx[ts_x] = [ts.y[index]]
             }
          })
       })
 
-      let x=[]
-      let y=[]
+      let x = []
+      let y = []
 
       for (const [key, value] of Object.entries(xx)) {
          let val = value.filter(v => v != null)
@@ -181,7 +184,7 @@ export default class {
 
          y.push(val)
          x.push(key)
-       }
+      }
 
       console.log(new Date() - st)
       console.log(y)

@@ -6,6 +6,7 @@ import Footer from './ui/Footer.vue'
 
 import NavHome from './ui/NavHome.vue'
 import NavSetting from './ui/NavSetting.vue'
+import NavEBAS from './ui/NavEBAS.vue'
 
 import ComponentSetting from './settings/component_setting.vue'
 import DEHMSetting from './settings/dehm_setting.vue'
@@ -20,10 +21,13 @@ import NewComponent from './chemicals/new_component.vue'
 
 import EBAS from './ebas/EBAS.vue'
 import EBASQuery from './ebas/EBAS_query.vue'
+import EBASTable from './ebas/EBAS_table.vue'
 import EBASPlot from './ebas/EBAS_plot.vue'
 import EBASMap from './ebas/EBAS_map.vue'
 
-import EditableTable from './ui/editable_table.vue'
+import EditableTable from './toolbox/editable_table.vue'
+import FigSetting from './toolbox/fig_setting.vue'
+import MapSetting from './toolbox/map_setting.vue'
 
 
 
@@ -36,11 +40,17 @@ const installObj = {
     Vue.component('LoginRegister', LoginRegister)
     Vue.component('Message', Message)
     Vue.component('Footer', Footer)
+
+    // app tools
     Vue.component('EditableTable', EditableTable)
+    Vue.component('FigSetting', FigSetting)
+    Vue.component('MapSetting', MapSetting)
     
     // app nav bar
     Vue.component('NavHome', NavHome)
     Vue.component('NavSetting', NavSetting)
+    Vue.component('NavEBAS', NavEBAS)
+
     
     // app settings
     Vue.component('ComponentSetting', ComponentSetting)
@@ -57,6 +67,7 @@ const installObj = {
     // EBAS viz 
     Vue.component('EBAS', EBAS)
     Vue.component('EBASQuery', EBASQuery)
+    Vue.component('EBASTable', EBASTable)
     Vue.component('EBASPlot', EBASPlot)
     Vue.component('EBASMap', EBASMap)
   }

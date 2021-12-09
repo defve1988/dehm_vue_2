@@ -1,11 +1,8 @@
 <template>
-  <v-card
-    :height="ui_control.tab_height"
-    class="pa-5"
-    :dark="ui_control.theme.dark"
-    :style="`background-color:${ui_control.theme_color.card_bg}`"
-  >
-    <v-row>
+  <v-container class="pr-10">
+    <v-subtitle class="title"> EBAS Data Visualizations </v-subtitle>
+    <v-divider></v-divider>
+    <v-row class="mt-3">
       <v-col cols="2" class="pb-0">
         <v-row>
           <v-col>
@@ -113,7 +110,7 @@
         </v-row>
       </v-col>
 
-      <v-col cols="7" class="ma-0 pa-0 px-3" align-self="center" align="center">
+      <v-col cols="9" class="ma-0 pa-0 px-3" align-self="center" align="center">
         <v-row>
           <v-col cols="4" class="mt-2 mx-2 pa-0">
             <v-combobox
@@ -152,16 +149,13 @@
           </v-col>
         </v-row>
       </v-col>
-
-      <v-col cols="2" class="pb-0"> plot editing tools </v-col>
     </v-row>
-  </v-card>
+  </v-container>
 </template>
 
 <script>
 import { mapState, mapMutations } from "vuex";
-import Viz from "@/app_class/viz";
-import TS from "@/app_class/ts";
+import PlotCase from "@/app_class/plot_case";
 
 export default {
   name: "ebas_plot",
@@ -170,27 +164,35 @@ export default {
     selected_site: [],
     selected_component: [],
     list_height: 285,
-    plot_height:600,
-    avg_types: ["Hourly", "Daily", "Monthly"],
-    fig_types: ["TS-Scatter", "TS-Line", "TS-Bar", "TS-ErrorBar", "TS-Box", "Scatter", "Histogram"],
+    plot_height: 650,
+    avg_types: ["Hourly", "Daily", "Monthly", "None"],
+    fig_types: [
+      { text: "TS-Scatter", val: "ts_scatter" },
+      { text: "TS-Line", val: "ts_line" },
+      { text: "TS-Bar", val: "ts_bar" },
+      { text: "TS-ErrorBar", val: "ts_error_bar" },
+      { text: "TS-Box", val: "ts_box" },
+      { text: "Scatter", val: "scatter" },
+      { text: "Histogram", val: "hist" },
+    ],
     avg_type_selected: "Hourly",
-    fig_type_selected: "TS-Scatter",
+    fig_type_selected: { text: "TS-Scatter", val: "ts_scatter" },
     gathering_method: 0,
     gathering_methods: ["None", "Mean", "Median", "Max", "Min"],
     is_select_all_site: false,
     is_select_all_component: false,
-    ts: new TS(),
   }),
   mounted() {
-    this.data_viz = new Viz();
     var plot = this.ui_control.plot_default;
     plot.div = "ebas_viz_plot";
-    plot.title = "EBAS data";
-    plot.layout.width = this.$refs.ebas_viz_plot.clientWidth;
-    plot.layout.height = this.plot_height-50;
+    plot.layout.title = "EBAS data";
 
-    this.data_viz.init_config(plot);
-    this.data_viz.plot_obj.gen_scatter([]);
+    plot.fig_type = this.fig_type_selected.val;
+    plot.layout.width = this.$refs.ebas_viz_plot.clientWidth;
+    plot.layout.height = this.plot_height - 50;
+
+    this.plot_case = new PlotCase(plot);
+    this.plot_case.set_color_theme(this.app_data.user.color_list);
   },
   computed: {
     ...mapState({
@@ -209,9 +211,11 @@ export default {
       component = [...new Set(component)];
       return component;
     },
+
   },
   methods: {
     ...mapMutations(["SET_MESSAGE"]),
+
     select_all_site() {
       if (this.is_select_all_site) {
         this.selected_site = this.site_index;
@@ -226,27 +230,34 @@ export default {
         this.selected_component = [];
       }
     },
-    async change_fig_type() {},
     async new_plot() {
       this.ui_control.isloading = true;
-      this.data_viz.set_color_theme(this.app_data.user.color_list);
 
-      // console.log(this.selected_site, this.selected_component);
-
-      await this.ts.gene_ts(
+      await this.plot_case.plot_figure(
         this.app_data.ebas.data.data,
         this.selected_site,
-        this.selected_component
+        this.selected_component,
+        this.gathering_methods[this.gathering_method],
+        null,
+        this.avg_type_selected
       );
 
-      await this.ts.gather_ts(this.gathering_methods[this.gathering_method]);
+      this.plot_case.set_layout({
+        xaxis: {
+          title: "date",
+        },
+        yaxis: {
+          title: "conc.",
+        },
+      });
+      this.plot_case.update_layout();
+      // console.log(this.plot_case.layout);
+      // console.log(this.plot_case.config);
 
-      var data = await this.ts.averaging_ts(this.fig_type_selected);
-      // // console.log(data)
-
-      this.data_viz.plot_obj.gen_scatter(data);
       this.ui_control.isloading = false;
     },
+
+    async change_fig_type() {},
     async update_plot() {},
   },
 };

@@ -39,9 +39,10 @@ const state = {
       color: 'info'
    },
    curr_setting_view: "User",
+   curr_ebas_view: "Data Query",
    home_view: [
-      { text: "Documents", icon: "mdi-file-document-outline", router: "documents" },
-      { text: "EBAS Visualization", icon: "mdi-chart-timeline-variant", router: "ebas_viz" },
+      { text: "Documents", icon: "mdi-file-document-outline", router: "" },
+      { text: "EBAS Visualization", icon: "mdi-database-eye-outline", router: "ebas_viz" },
       { text: "DEHM Visualization", icon: "mdi-earth", router: "dehm_viz" },
       { text: "DEHM Evaluations", icon: "mdi-chart-multiple", router: "dehm_eval" },
       { text: "App Settings", icon: "mdi-cog", router: "settings" },
@@ -55,11 +56,18 @@ const state = {
       { text: "APP Theme", icon: "mdi-brightness-6" },
    ],
 
+   ebas_view: [
+      { text: "Data Query", icon: "mdi-database-search-outline" },
+      { text: "Data Table", icon: "mdi-file-table-outline" },
+      { text: "Time Series", icon: "mdi-chart-timeline-variant" },
+      { text: "Site Map", icon: "mdi-map" },
+   ],
+
    plot_default: {
       div: "",
       title: "",
-      viz_type: "plotly",
-      fig_type: "medium",
+      fig_type: "",
+      fig_size: "large",
       layout: {
          title: "",
          showlegend: true,
@@ -77,7 +85,6 @@ const state = {
          width: null,
          height: null,
          autosize: true,
-         margin: { r: 25, t: 25, b: 25, l: 50 },
       },
       config: {
          displaylogo: false,

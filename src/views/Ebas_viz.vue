@@ -1,6 +1,25 @@
 <template>
   <v-container class="px-10">
-    <EBAS />
+    <NavEBAS />
+    <span v-if="!islogin"> Please login for EBAS database. </span>
+
+    <div v-else>
+      <EBASQuery v-if="ui_control.curr_ebas_view === 'Data Query'" />
+      <EBASTable v-if="ui_control.curr_ebas_view === 'Data Table'" />
+      <EBASPlot v-if="ui_control.curr_ebas_view === 'Time Series'" />
+      <EBASMap v-if="ui_control.curr_ebas_view === 'Site Map'" />
+    </div>
+
+    <div>
+      TODO:
+      <ul>
+        <li>...</li>
+      </ul>
+      Bugs:
+      <ul>
+        <li>...</li>
+      </ul>
+    </div>
   </v-container>
 </template>
 
@@ -8,12 +27,15 @@
 import { mapState, mapMutations } from "vuex";
 
 export default {
-  name: "ebas viz",
+  name: "ebas_viz",
   computed: {
     ...mapState({
       app_data: "app_data",
       ui_control: "ui_control",
     }),
+    islogin() {
+      return this.app_data.user.isLogin;
+    },
   },
   data: () => ({}),
   mounted() {},

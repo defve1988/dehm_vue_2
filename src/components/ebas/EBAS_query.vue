@@ -1,10 +1,7 @@
 <template>
-  <v-card
-    :height="ui_control.tab_height"
-    class="px-5"
-    :dark="ui_control.theme.dark"
-    :style="`background-color:${ui_control.theme_color.card_bg}`"
-  >
+  <v-container class="pr-10">
+    <v-subtitle class="title"> EBAS Data Query </v-subtitle>
+    <v-divider></v-divider>
     <v-row>
       <v-col cols="3" class="pb-0">
         <v-switch
@@ -46,7 +43,13 @@
               @click="select_all(sel.key)"
             ></v-checkbox>
           </v-subheader>
-          <v-list subheader dense class="pt-0 mt-0" :height="list_hight" outlined>
+          <v-list
+            subheader
+            dense
+            class="pt-0 mt-0"
+            :height="list_hight"
+            outlined
+          >
             <v-list-item-group v-model="selection[sel.key].val" multiple dense>
               <template v-for="(item, i) in selection[sel.key].item">
                 <v-list-item
@@ -73,7 +76,7 @@
         </v-col>
       </template>
     </v-row>
-  </v-card>
+  </v-container>
 </template>
 
 <script>
@@ -85,7 +88,7 @@ export default {
     isLoading: false,
     use_ebas: true,
     use_id: true,
-    list_hight:275,
+    list_hight: 275,
     selection_list: [
       { title: "Sites", key: "site" },
       { title: "Components", key: "component" },

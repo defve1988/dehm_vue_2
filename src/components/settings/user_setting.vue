@@ -159,6 +159,7 @@ export default {
     add_color() {
       let color = Math.floor(Math.random() * 16777215).toString(16);
       this.ui_control.user_color_list.push("#" + color + "CC");
+      console.log(this.ui_control.user_color_list)
     },
     async save_color_list(){
       this.app_data.user.color_list = this.ui_control.user_color_list

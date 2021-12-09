@@ -45,7 +45,7 @@
 
     TODO:
     <ul>
-      <li>...</li>
+      <li>allow add/del lines without re-plot</li>
       <li>...</li>
       <li>...</li>
     </ul>
