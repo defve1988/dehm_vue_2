@@ -1,6 +1,6 @@
 <template>
   <v-container class="pr-10">
-    <v-subtitle class="title"> EBAS Data Visualizations </v-subtitle>
+    <div class="subtitle-1">EBAS Data Visualizations</div>
     <v-divider></v-divider>
     <v-row class="mt-3">
       <v-col cols="2" class="pb-0">
@@ -92,7 +92,7 @@
         </v-row>
       </v-col>
 
-      <v-col cols="1" class="pa-0" align="center">
+      <v-col cols="1" class="pa-0 mr-2" align="center">
         <v-row class="pa-0 ma-0" justify="center">
           <v-radio-group v-model="gathering_method">
             Gathering
@@ -106,32 +106,49 @@
         </v-row>
 
         <v-row class="pa-0 my-3 mt-15" justify="center">
-          <v-btn @click="new_plot" :dark="!ui_control.theme.dark"> >> </v-btn>
+          <v-btn @click="add_plot" :dark="!ui_control.theme.dark"> New </v-btn>
+        </v-row>
+
+        <v-row class="pa-0 my-3 mt-15" justify="center">
+          <v-btn @click="new_plot" :dark="!ui_control.theme.dark"> Plot </v-btn>
         </v-row>
       </v-col>
 
-      <v-col cols="9" class="ma-0 pa-0 px-3" align-self="center" align="center">
+      <v-col cols="8" class="ma-0 pa-0 px-3" align-self="center" align="center">
         <v-row>
-          <v-col cols="4" class="mt-2 mx-2 pa-0">
+          <v-col cols="3" class="mt-2 pa-0">
             <v-combobox
               v-model="avg_type_selected"
               :items="avg_types"
               @change="new_plot"
               label="Averaging"
-              class="py-3 px-8"
+              class="py-3 pr-8"
               outlined
               dense
               hide-details
             ></v-combobox>
           </v-col>
 
-          <v-col cols="4" class="mt-2 mx-2 pa-0">
+          <v-col cols="3" class="mt-2 pa-0">
             <v-combobox
               v-model="fig_type_selected"
               :items="fig_types"
               @change="change_fig_type"
               label="Figure Type"
-              class="py-3 px-8"
+              class="py-3 pr-8"
+              outlined
+              dense
+              hide-details
+            ></v-combobox>
+          </v-col>
+
+          <v-col cols="3" class="mt-2 pa-0">
+            <v-combobox
+              v-model="trend_type_selected"
+              :items="trend_types"
+              @change="change_trend_type"
+              label="Trend"
+              class="py-3 pr-8"
               outlined
               dense
               hide-details
@@ -139,13 +156,46 @@
           </v-col>
         </v-row>
 
-        <v-row>
-          <v-col clas="mx-2">
-            <div
-              ref="ebas_viz_plot"
-              id="ebas_viz_plot"
-              :style="`height: ${plot_height}px`"
-            ></div>
+        <v-row ref="ebas_viz_canvas">
+          <v-col class="mt-2 pa-0">
+            <v-tabs
+              v-model="ui_control.ebas_curr_tab"
+              :dark="!ui_control.theme.dark"
+              dense
+              show-arrows
+              height="30"
+              background-color="#555555"
+              slider-color="amber"
+            >
+              <v-tab
+                v-for="n in app_data.ebas_plot_case.length"
+                :key="n"
+                class="px-2"
+              >
+                Fig {{ n }}
+                <v-btn
+                  icon
+                  x-small
+                  class="ml-4"
+                  @click.native.stop
+                  @click="del_plot(n)"
+                >
+                  <v-icon>mdi-close</v-icon>
+                </v-btn>
+              </v-tab>
+            </v-tabs>
+
+            <v-tabs-items v-model="ui_control.ebas_curr_tab">
+              <v-tab-item
+                v-for="fn in app_data.ebas_plot_case.length + 1"
+                :key="fn"
+              >
+                <div
+                  :id="'ebas_viz_plot_' + fn"
+                  :style="`height: ${plot_height}px`"
+                ></div>
+              </v-tab-item>
+            </v-tabs-items>
           </v-col>
         </v-row>
       </v-col>
@@ -163,9 +213,10 @@ export default {
     isLoading: false,
     selected_site: [],
     selected_component: [],
-    list_height: 285,
-    plot_height: 650,
+    list_height: 300,
+    plot_height: 600,
     avg_types: ["Hourly", "Daily", "Monthly", "None"],
+    trend_types: ["None", "Linear", "Sen's Slope", "LOWESS"],
     fig_types: [
       { text: "TS-Scatter", val: "ts_scatter" },
       { text: "TS-Line", val: "ts_line" },
@@ -177,22 +228,14 @@ export default {
     ],
     avg_type_selected: "Hourly",
     fig_type_selected: { text: "TS-Scatter", val: "ts_scatter" },
+    trend_type_selected: "None",
     gathering_method: 0,
     gathering_methods: ["None", "Mean", "Median", "Max", "Min"],
     is_select_all_site: false,
     is_select_all_component: false,
   }),
   mounted() {
-    var plot = this.ui_control.plot_default;
-    plot.div = "ebas_viz_plot";
-    plot.layout.title = "EBAS data";
-
-    plot.fig_type = this.fig_type_selected.val;
-    plot.layout.width = this.$refs.ebas_viz_plot.clientWidth;
-    plot.layout.height = this.plot_height - 50;
-
-    this.plot_case = new PlotCase(plot);
-    this.plot_case.set_color_theme(this.app_data.user.color_list);
+    this.add_plot();
   },
   computed: {
     ...mapState({
@@ -211,7 +254,6 @@ export default {
       component = [...new Set(component)];
       return component;
     },
-
   },
   methods: {
     ...mapMutations(["SET_MESSAGE"]),
@@ -230,35 +272,59 @@ export default {
         this.selected_component = [];
       }
     },
+    async add_plot() {
+      var plot = this.ui_control.plot_default;
+      plot.layout.title = `EBAS data ${
+        this.app_data.ebas_plot_case.length + 1
+      }`;
+      plot.fig_type = this.fig_type_selected.val;
+      plot.layout.width = this.$refs.ebas_viz_canvas.clientWidth;
+      plot.layout.height = this.plot_height;
+      plot.div = `ebas_viz_plot_${this.app_data.ebas_plot_case.length + 1}`;
+      this.app_data.ebas_plot_case.push(new PlotCase(plot));
+
+      this.ui_control.ebas_curr_tab = this.app_data.ebas_plot_case.length - 1;
+      // console.log(this.app_data.ebas_plot_case, this.ui_control.ebas_curr_tab);
+      await this.$nextTick();
+      await this.$nextTick();
+      let index = this.ui_control.ebas_curr_tab;
+      this.app_data.ebas_plot_case[index].plot_new();
+    },
+
     async new_plot() {
       this.ui_control.isloading = true;
-
-      await this.plot_case.plot_figure(
+      let index = this.ui_control.ebas_curr_tab;
+      await this.app_data.ebas_plot_case[index].plot_figure(
         this.app_data.ebas.data.data,
         this.selected_site,
         this.selected_component,
         this.gathering_methods[this.gathering_method],
-        null,
+        null, // this will be unit convert
         this.avg_type_selected
       );
-
-      this.plot_case.set_layout({
-        xaxis: {
-          title: "date",
-        },
-        yaxis: {
-          title: "conc.",
-        },
-      });
-      this.plot_case.update_layout();
-      // console.log(this.plot_case.layout);
-      // console.log(this.plot_case.config);
-
+      await this.change_trend_type();
       this.ui_control.isloading = false;
+    },
+
+    del_plot(n) {
+      // console.log(n)
+      this.app_data.ebas_plot_case.splice(n - 1, 1);
     },
 
     async change_fig_type() {},
     async update_plot() {},
+    async change_trend_type() {
+      this.ui_control.isloading = true;
+      let index = this.ui_control.ebas_curr_tab;
+      if (this.trend_type_selected != "None") {
+        if (this.app_data.ebas_plot_case[index].trace.length > 0) {
+          await this.app_data.ebas_plot_case[index].plot_trend(
+            this.trend_type_selected
+          );
+        }
+      }
+      this.ui_control.isloading = false;
+    },
   },
 };
 </script>

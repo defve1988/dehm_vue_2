@@ -16,7 +16,7 @@ const state = {
    theme_color: {},
 
    isloading: false,
-   register_dialog: false,
+   register_dialog: true,
    new_component_dialog: false,
 
    new_component_dialog_content: {
@@ -63,6 +63,8 @@ const state = {
       { text: "Site Map", icon: "mdi-map" },
    ],
 
+   ebas_curr_tab:0,
+
    plot_default: {
       div: "",
       title: "",
@@ -71,6 +73,14 @@ const state = {
       layout: {
          title: "",
          showlegend: true,
+         // paper_bgcolor: "rgb(255,255,255)", 
+         // plot_bgcolor: "rgb(229,229,229)", 
+         xaxis: {
+            title: "date",
+          },
+          yaxis: {
+            title: "conc.",
+          },
          legend: {
             font: {
                size: 10,

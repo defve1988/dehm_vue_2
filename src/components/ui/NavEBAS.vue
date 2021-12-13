@@ -29,7 +29,11 @@
       </v-list-item>
     </v-list>
 
-    <FigSetting v-if="ui_control.curr_ebas_view == 'Time Series'" />
+    <v-divider></v-divider>
+    <FigSetting
+      v-if="ui_control.curr_ebas_view == 'Time Series'"
+      :plot_case="app_data.ebas_plot_case[ui_control.ebas_curr_tab]"
+    />
     <MapSetting v-if="ui_control.curr_ebas_view == 'Site Map'" />
   </v-navigation-drawer>
 </template>

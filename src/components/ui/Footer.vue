@@ -1,17 +1,9 @@
 <template>
-  <v-hover v-slot:default="{ hover }">
-    <v-footer app color="grey darken-4" id="footer">
-      <v-icon
-        size="18 mb-2"
-        :color="hover ? 'warning' : 'teal accent-1'"
-        :class="hover ? '' : 'fa-bar-chart'"
-        >mdi-fish</v-icon
-      >
-      <span class="mx-1 subtitle-2 text-right teal--text">
-       &copy; 2020  Chuanlong Zhou.
-      </span>
-    </v-footer>
-  </v-hover>
+  <v-footer app color="grey darken-4" id="footer">
+    <span class="mx-1 subtitle-2 text-right grey--text">
+      Chuanlong Zhou<span class="copyleft">&copy;</span> 2021
+    </span>
+  </v-footer>
 </template>
 
 <script>
@@ -39,5 +31,9 @@ span {
 /* turn the fish side */
 .fa-bar-chart {
   transform: rotate(360deg) scaleX(-1);
+}
+.copyleft {
+  display: inline-block;
+  transform: rotate(180deg);
 }
 </style>

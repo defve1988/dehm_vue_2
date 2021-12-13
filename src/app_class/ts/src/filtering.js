@@ -1,3 +1,5 @@
+import _ from "underscore"
+
 async function filtering(data, site, component) {
    var temp
    var res = []
@@ -8,6 +10,9 @@ async function filtering(data, site, component) {
          temp = data.filter((x) => s == x.site);
          temp = temp.filter((x) => c == x.component);
          if (temp.length > 0) {
+            // filtering not null values
+            temp = temp.filter(x => x.val != null)
+            temp = _.sortBy(temp, 'st');
             res.push({
                x: temp.map((x) => x.st),
                y: temp.map((x) => x.val),

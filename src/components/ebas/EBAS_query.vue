@@ -1,6 +1,6 @@
 <template>
   <v-container class="pr-10">
-    <v-subtitle class="title"> EBAS Data Query </v-subtitle>
+    <div class="subtitle-1"> EBAS Data Query </div>
     <v-divider></v-divider>
     <v-row>
       <v-col cols="3" class="pb-0">

@@ -1,6 +1,6 @@
 <template>
   <v-container class="pr-10">
-    <v-subtitle class="title"> EBAS Data Table </v-subtitle>
+    <div class="subtitle-1"> EBAS Data Table </div>
     <v-divider></v-divider>
     <v-data-table
       :headers="ebas_data.head"

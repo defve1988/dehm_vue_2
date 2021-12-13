@@ -8,7 +8,7 @@ async function averaging(data, method) {
    if (method == "None") {
       return Promise.resolve(data)
    }
-   console.log(data, method)
+   // console.log(data, method)
 
    let averaged = []
    data.forEach(ts => {
@@ -44,7 +44,7 @@ async function averaging(data, method) {
          // unit: null,
          method: method,
          component: ts.component,
-         y_name: ts.component + ", " + method
+         y_name: ts.y_name + ", " + method
       })
    })
 

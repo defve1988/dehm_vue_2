@@ -13,11 +13,13 @@
     <div>
       TODO:
       <ul>
-        <li>...</li>
+        <li>Unit conversion</li>
+        <li>SLR and Sen's slope confidence interval</li>
       </ul>
       Bugs:
       <ul>
-        <li>...</li>
+        <li>Fix date string issue.</li>
+        <li>Deleting middle figure will cause figure order error.</li>
       </ul>
     </div>
   </v-container>

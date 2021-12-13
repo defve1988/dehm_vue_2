@@ -21,15 +21,15 @@ export default class extends canvas {
          // map_scatter:
       }
 
-
       this.set_fig_size(fig_size)
 
       this.set_layout(layout)
       this.set_config(config)
 
       this.gene_trace = this.all_figs[fig_type]
+      this.gene_trend_trace = fig_ts.gene_line_interval
       this.trace = this.gene_trace([])
-      this.plot_new()
+      // this.plot_new()
    }
    
    restyle(update){
@@ -37,6 +37,7 @@ export default class extends canvas {
    }
 
    plot_new(animated = false, animate_x = false) {
+      this.clear_image()
       let trace = this.trace
       if (animated) {
          var start_trace = []
@@ -66,8 +67,8 @@ export default class extends canvas {
       }
    }
 
-   add_trace() {
-      Plotly.addTraces(this.div, this.trace);
+   add_trace(trace) {
+      Plotly.addTraces(this.div, trace);
    }
 
    set_trace(trace) {

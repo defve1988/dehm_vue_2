@@ -7,7 +7,7 @@
     </v-main>
     <LoginRegister />
     <Message />
-    <!-- <Footer /> -->
+    <Footer />
   </v-app>
 </template>
 

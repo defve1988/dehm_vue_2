@@ -143,7 +143,7 @@ export default class {
             },
          },
          // others
-         dragmode: "zoom",
+         dragmode: "pan",
          bargap: 0.05,
          bargroupgap: 0.2,
          barmode: "overlay",
@@ -188,6 +188,11 @@ export default class {
       const b = parseInt(hex.substring(4, 6), 16);
 
       return `rgba(${r},${g},${b},${alpha})`;
+   }
+
+   change_alpha(rgba, alpha){
+      let t = rgba.split(",")
+      return `${t[0]}, ${t[1]}, ${t[2]}, ${alpha})`
    }
 
 }
