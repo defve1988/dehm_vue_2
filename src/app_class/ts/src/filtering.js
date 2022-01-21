@@ -4,6 +4,16 @@ async function filtering(data, site, component) {
    var temp
    var res = []
 
+   if (site=="all"){
+      site = _.uniq(data.map(x=>x.site))
+   }
+   
+   if (component=="all"){
+      component = _.uniq(data.map(x=>x.component))
+   }
+
+   console.log(site,component)
+
    // search for each possible combinations
    for (const s of site) {
       for (const c of component) {

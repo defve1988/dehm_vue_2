@@ -6,6 +6,7 @@ import vuetify from './plugins/vuetify'
 
 import User from "@/app_class/user";
 import EBAS from "@/app_class/ebas";
+import DEHM from "@/app_class/dehm";
 
 Vue.config.productionTip = false
 
@@ -27,6 +28,7 @@ Vue.use(my_component)
 
 store.state.app_data.user = new User(base)
 store.state.app_data.ebas = new EBAS(base)
+store.state.app_data.dehm = new DEHM(base)
 
 new Vue({
   router,

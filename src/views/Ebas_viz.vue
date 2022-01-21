@@ -15,11 +15,13 @@
       <ul>
         <li>Unit conversion</li>
         <li>SLR and Sen's slope confidence interval</li>
+        <li>Error bar choice (std or percentiles)</li>
+        <li>plot adjustment</li>
       </ul>
       Bugs:
       <ul>
-        <li>Fix date string issue.</li>
         <li>Deleting middle figure will cause figure order error.</li>
+        <li>Axis issues caused with Histogram and scatter.</li>
       </ul>
     </div>
   </v-container>

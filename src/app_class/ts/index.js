@@ -17,15 +17,7 @@ export default class {
       let res = []
       trace.forEach(t => {
          // make sure the date string is converted to number
-         let x_number = t.x.map(tx => {
-            let temp = tx
-            // if the datestring is format as "2020-02-27T07"
-            if (tx.length == 13 && tx[10]=="T"){
-               temp = temp.split("T")
-               temp = `${temp[0]} ${temp[1]}:00`
-            }
-            return new Date(temp).getTime()
-         })
+         let x_number = t.x.map(tx => new Date(tx).getTime())
          this.trend.run({ x: x_number, y: t.y }, config)
          res.push({
             x: t.x,

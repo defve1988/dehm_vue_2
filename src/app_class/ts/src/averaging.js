@@ -1,5 +1,6 @@
 import {
    mean,
+   std
 } from "mathjs";
 
 
@@ -25,22 +26,33 @@ async function averaging(data, method) {
 
       let x = []
       let y = []
+      let box_x = []
+      let box_y = []
+      let error = []
+      let err, avg
 
       for (const [key, value] of Object.entries(xx)) {
          let val = value.filter(v => v != null)
          if (val.length > 0) {
-            val = mean(val)
+            err = std(val)
+            avg = mean(val)
          }
          else {
             val = null
          }
-         y.push(val)
+         y.push(avg)
          x.push(key)
+         error.push(err)
+         box_x = [...box_x, ...Array(val.length).fill(key)]
+         box_y = [...box_y, ...val]
       }
 
       averaged.push({
          x: x,
          y: y,
+         error: error,
+         box_x: box_x,
+         box_y: box_y,
          // unit: null,
          method: method,
          component: ts.component,
@@ -53,10 +65,11 @@ async function averaging(data, method) {
 
 function _convert_date_string(ts_x, method) {
    // time string: '2020-01-01T06:00:00.000Z'
+   // after converting: '2020-01-01T06:00'
    let res
    switch (method) {
       case "Hourly":
-         res = ts_x.slice(0, 13)
+         res = ts_x.slice(0, 13) + ":00"
          break;
       case "Daily":
          res = ts_x.slice(0, 10)

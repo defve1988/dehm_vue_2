@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col class="title">
-        <h3 :style="`color:${ui_control.theme_color.content}`">
+        <div class="subtitle-1" :style="`color:${ui_control.theme_color.content}`">
           EBAS update
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -31,7 +31,7 @@
             </v-icon>
             Take a break. This will take 10~15 minutes.
           </span>
-        </h3>
+        </div>
       </v-col>
     </v-row>
     TODO:

@@ -98,6 +98,7 @@ export default class {
             showgrid: true,
             zeroline: true,
             autotick: true,
+            autorange: true,
          },
          yaxis: {
             title: "",
@@ -111,6 +112,7 @@ export default class {
             showgrid: true,
             zeroline: true,
             autotick: true,
+            autorange: true,
          },
          // font
          font: {
@@ -190,7 +192,7 @@ export default class {
       return `rgba(${r},${g},${b},${alpha})`;
    }
 
-   change_alpha(rgba, alpha){
+   change_alpha(rgba, alpha) {
       let t = rgba.split(",")
       return `${t[0]}, ${t[1]}, ${t[2]}, ${alpha})`
    }

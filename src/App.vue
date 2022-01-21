@@ -28,10 +28,18 @@ export default {
   async mounted() {
     this.ui_control.isloading = true;
     this.SET_THEME();
-    let response = await this.app_data.ebas.get_site_list(
+    var response
+    // response = await this.app_data.ebas.get_site_list(
+    //   this.app_data.headers
+    // );
+    // this.app_data.ebas.init_selections();
+    // if (response.code != 0) {
+    //   this.SET_MESSAGE(response);
+    // }
+
+    response = await this.app_data.dehm.get_project_list(
       this.app_data.headers
     );
-    this.app_data.ebas.init_selections();
     if (response.code != 0) {
       this.SET_MESSAGE(response);
     }

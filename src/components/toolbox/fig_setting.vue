@@ -204,7 +204,6 @@ export default {
       this.plot_case.update_layout();
     },
     restyle(attr) {
-      console.log(attr);
       switch (attr) {
         case "marker_size":
           this.plot_case.restyle({

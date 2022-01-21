@@ -1,44 +1,32 @@
 import Plotly from "plotly.js-dist"
 
-import canvas from "@/app_class/plot_case/canvas"
-import fig_ts from "./src/fig_ts"
+import TSPlot from "./src/fig_ts"
 
-
-
-export default class extends canvas {
+export default class extends TSPlot {
    constructor(div, layout, config, fig_type, fig_size) {
-      super(div)
+      super(div, fig_type)
       this.fig_type = fig_type
-
-      this.all_figs = {
-         ts_scatter: fig_ts.gene_scatter
-         // ts_line:
-         // ts_bar:
-         // ts_error_bar:
-         // ts_box:
-         // scatter:
-         // hist:
-         // map_scatter:
-      }
-
+      
       this.set_fig_size(fig_size)
-
       this.set_layout(layout)
       this.set_config(config)
+      this.set_fig_type(fig_type)
 
-      this.gene_trace = this.all_figs[fig_type]
-      this.gene_trend_trace = fig_ts.gene_line_interval
-      this.trace = this.gene_trace([])
+      this.trace_layout = this.gene_trace([])
       // this.plot_new()
+      // console.log(this.gene_trace)
    }
-   
-   restyle(update){
+
+
+   restyle(update) {
       Plotly.restyle(this.div, update);
    }
 
    plot_new(animated = false, animate_x = false) {
       this.clear_image()
-      let trace = this.trace
+      let trace = this.trace_layout.trace
+      let layout = this.trace_layout.layout
+      this.set_layout(layout)
       if (animated) {
          var start_trace = []
          trace.forEach(t => {
@@ -63,16 +51,13 @@ export default class extends canvas {
             },
          })
       } else {
-         Plotly.newPlot(this.div, this.trace, this.layout, this.config);
+         // console.log(this.layout)
+         Plotly.newPlot(this.div, trace, this.layout, this.config);
       }
    }
 
    add_trace(trace) {
       Plotly.addTraces(this.div, trace);
-   }
-
-   set_trace(trace) {
-      this.trace = this.trace.concat(trace)
    }
 
 }

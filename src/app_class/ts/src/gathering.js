@@ -48,7 +48,7 @@ async function _gathering(tss, method) {
    let x = []
    let y = []
 
-   for (const [key, value] of Object.entries(xx)) {
+   for (const [key, value] of Object.entries(xx).sort()) {
       let val = value.filter(v => v != null)
       if (val.length > 0) {
          switch (method) {
@@ -75,7 +75,7 @@ async function _gathering(tss, method) {
    }
 
    // console.log(new Date() - st)
-   // console.log(y)
+   // console.log(x)
    return Promise.resolve({ x: x, y: y })
 }
 

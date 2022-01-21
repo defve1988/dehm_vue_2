@@ -31,7 +31,7 @@ const state = {
    components: [
       { c: null, text: null }
    ],
-   tab_height:700,
+   tab_height: 700,
 
    snackbar: {
       show: true,
@@ -40,6 +40,7 @@ const state = {
    },
    curr_setting_view: "User",
    curr_ebas_view: "Data Query",
+   curr_dehm_view: "DEHM Preprocess",
    home_view: [
       { text: "Documents", icon: "mdi-file-document-outline", router: "" },
       { text: "EBAS Visualization", icon: "mdi-database-eye-outline", router: "ebas_viz" },
@@ -51,8 +52,9 @@ const state = {
    setting_view: [
       { text: "User", icon: "mdi-account-outline" },
       { text: "Components", icon: "mdi-poll" },
-      { text: "EBAS Database", icon: "mdi-database-arrow-down-outline" },
-      { text: "DEHM Preprocess", icon: "mdi-database-clock-outline" },
+      { text: "Files", icon: "mdi-file-multiple" },
+      // { text: "EBAS Database", icon: "mdi-database-arrow-down-outline" },
+      // { text: "DEHM Preprocess", icon: "mdi-database-clock-outline" },
       { text: "APP Theme", icon: "mdi-brightness-6" },
    ],
 
@@ -63,7 +65,88 @@ const state = {
       { text: "Site Map", icon: "mdi-map" },
    ],
 
-   ebas_curr_tab:0,
+   dehm_view: [
+      { text: "DEHM Preprocess", icon: "mdi-database-clock-outline" },
+      // { text: "Model Case", icon: "mdi-database-search-outline" },
+      // { text: "Data Table", icon: "mdi-file-table-outline" },
+      { text: "Time Series", icon: "mdi-chart-timeline-variant" },
+      { text: "DEHM Heatmap", icon: "mdi-grain" },
+   ],
+
+   eval_view: [
+      { text: "Data Query", icon: "mdi-database-search-outline" },
+      { text: "Time Series", icon: "mdi-chart-timeline-variant" },
+      { text: "Site Map", icon: "mdi-map" },
+   ],
+
+   ebas_curr_tab: 0,
+   dehm_curr_tab: 0,
+
+   fig_type_1: [
+      {
+         text: "TS-Scatter",
+         val: "ts_scatter",
+         mode: "markers",
+         error: false,
+      },
+      { text: "TS-Line", val: "ts_scatter", mode: "lines", error: false },
+      {
+         text: "TS-Scatter-Line",
+         val: "ts_scatter",
+         mode: "lines+markers",
+         error: false,
+      },
+      { text: "TS-Bar", val: "ts_bar", mode: "overlay", error: false },
+      { text: "Scatter", val: "scatter", mode: "markers", error: false },
+      { text: "Histogram", val: "hist", mode: "overlay", error: false },
+   ],
+   fig_type_2: [
+      { text: "TS-Box", val: "ts_box", mode: "group", error: true },
+      {
+         text: "TS-Scatter-line",
+         val: "ts_scatter",
+         mode: "lines+markers",
+         error: true,
+      },
+      { text: "TS-Bar", val: "ts_bar", mode: "overlay", error: true },
+      { text: "Scatter", val: "scatter", mode: "markers", error: true },
+   ],
+   map_style: [
+      {
+         text: "Light Style",
+         mapbox: {
+            style: "light",
+         },
+      },
+      {
+         text: "Dark Style",
+         mapbox: {
+            style: "dark",
+         },
+      },
+      {
+         text: "Land Map",
+         mapbox: {
+            style: "outdoors",
+         },
+      },
+      {
+         text: "Satellite Map",
+         mapbox: {
+            style: "white-bg",
+            layers: [
+               {
+                  sourcetype: "raster",
+                  source: [
+                     "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}",
+                  ],
+                  below: "traces",
+               },
+               { sourcetype: "streets" },
+            ],
+         },
+      },
+   ],
 
    plot_default: {
       div: "",
@@ -77,10 +160,10 @@ const state = {
          // plot_bgcolor: "rgb(229,229,229)", 
          xaxis: {
             title: "date",
-          },
-          yaxis: {
+         },
+         yaxis: {
             title: "conc.",
-          },
+         },
          legend: {
             font: {
                size: 10,

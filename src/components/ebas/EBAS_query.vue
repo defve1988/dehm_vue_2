@@ -76,6 +76,9 @@
         </v-col>
       </template>
     </v-row>
+
+    <v-divider class="mt-5"></v-divider>
+    <EBASSetting />
   </v-container>
 </template>
 

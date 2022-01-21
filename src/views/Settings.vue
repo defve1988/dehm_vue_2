@@ -6,8 +6,7 @@
     <div v-else>
       <UserSetting v-if="ui_control.curr_setting_view==='User'"/>
       <ComponentSetting v-if="ui_control.curr_setting_view==='Components'"/>
-      <EBASSetting v-if="ui_control.curr_setting_view==='EBAS Database'"/>
-      <DEHMSetting v-if="ui_control.curr_setting_view==='DEHM Preprocess'"/>
+      <FileSetting v-if="ui_control.curr_setting_view==='Files'"/>
       <ThemeSetting v-if="ui_control.curr_setting_view==='APP Theme'"/>
     </div>
   </v-container>

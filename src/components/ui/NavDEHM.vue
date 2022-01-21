@@ -9,9 +9,9 @@
   >
     <v-list class="pt-0">
       <v-list-item
-        v-for="(item, i) in ui_control.ebas_view"
+        v-for="(item, i) in ui_control.dehm_view"
         :key="i"
-        @click="switch_ebas_view(item.text)"
+        @click="switch_dehm_view(item.text)"
       >
         <v-list-item-icon>
           <v-icon :color="ui_control.theme_color.content">{{
@@ -54,8 +54,8 @@ export default {
   },
   methods: {
     ...mapMutations([]),
-    switch_ebas_view(text) {
-      this.ui_control.curr_ebas_view = text;
+    switch_dehm_view(text) {
+      this.ui_control.curr_dehm_view = text;
     },
   },
 };

@@ -1,21 +1,21 @@
 <template>
   <v-container class="pr-10">
-    <div class="subtitle-1">EBAS Data Visualizations</div>
+    <div class="subtitle-1">DEHM Case Visualizations</div>
     <v-divider></v-divider>
     <v-row class="mt-3">
       <v-col cols="2" class="pb-0">
         <v-row>
           <v-col>
             <v-subheader class="pt-0 mt-0 px-3" dark>
-              Sites
+              Project-Case
               <v-spacer></v-spacer>
-              all ({{ site_index.length }})
+              all ({{ project_case.length }})
               <v-checkbox
                 class="pt-0 my-0 py-0 pl-1"
                 dense
                 hide-details
-                v-model="is_select_all_site"
-                @click="select_all_site"
+                v-model="is_select_all_project_case"
+                @click="select_all_project_case"
               ></v-checkbox>
             </v-subheader>
             <v-list
@@ -25,8 +25,8 @@
               :height="list_height"
               outlined
             >
-              <v-list-item-group v-model="selected_site" multiple dense>
-                <template v-for="(item, i) in site_index">
+              <v-list-item-group v-model="selected_project_case" multiple dense>
+                <template v-for="(item, i) in project_case">
                   <v-divider
                     v-if="item == 'divider'"
                     :key="`item-${i}`"
@@ -50,10 +50,20 @@
           </v-col>
         </v-row>
 
+        <v-row class="py-0 my-0">
+          <v-col class="py-0 my-0">
+            <v-switch
+              v-model="use_var"
+              :label="use_var ? 'Use Variables' : 'Use Group'"
+              hide-details=""
+            ></v-switch>
+          </v-col>
+        </v-row>
+
         <v-row>
-          <v-col>
+          <v-col v-if="use_var">
             <v-subheader class="pt-0 mt-0 px-3" dark>
-              Components
+              DEHM Variables
               <v-spacer></v-spacer>
               all ({{ component_index.length }})
               <v-checkbox
@@ -81,7 +91,50 @@
                   >
                     <template v-slot:default="{ active }">
                       <v-list-item-content class="body-2 py-0">
-                        <span> {{ item }} {{ active ? "&#10004;" : "" }} </span>
+                        <span>
+                          {{ item.text }} {{ active ? "&#10004;" : "" }}
+                        </span>
+                      </v-list-item-content>
+                    </template>
+                  </v-list-item>
+                </template>
+              </v-list-item-group>
+            </v-list>
+          </v-col>
+
+          <v-col v-else>
+            <v-subheader class="pt-0 mt-0 px-3" dark>
+              DEHM Groups
+              <v-spacer></v-spacer>
+              all ({{ group_index.length }})
+              <v-checkbox
+                class="pt-0 my-0 py-0 pl-1"
+                dense
+                hide-details
+                v-model="is_select_all_group"
+                @click="select_all_group"
+              ></v-checkbox>
+            </v-subheader>
+            <v-list
+              subheader
+              dense
+              class="pt-0 mt-0"
+              :height="list_height"
+              outlined
+            >
+              <v-list-item-group v-model="selected_group" multiple dense>
+                <template v-for="(item, i) in group_index">
+                  <v-list-item
+                    :key="`item-${i}`"
+                    :value="item"
+                    active-class="primary--text text--accent-4"
+                    dense
+                  >
+                    <template v-slot:default="{ active }">
+                      <v-list-item-content class="body-2 py-0">
+                        <span>
+                          {{ item.name }} {{ active ? "&#10004;" : "" }}
+                        </span>
                       </v-list-item-content>
                     </template>
                   </v-list-item>
@@ -156,10 +209,10 @@
           </v-col>
         </v-row>
 
-        <v-row ref="ebas_viz_canvas">
+        <v-row ref="dehm_viz_canvas">
           <v-col class="mt-2 pa-0">
             <v-tabs
-              v-model="ui_control.ebas_curr_tab"
+              v-model="ui_control.dehm_curr_tab"
               :dark="!ui_control.theme.dark"
               dense
               show-arrows
@@ -168,7 +221,7 @@
               slider-color="amber"
             >
               <v-tab
-                v-for="n in app_data.ebas_plot_case.length"
+                v-for="n in app_data.dehm_plot_case.length"
                 :key="n"
                 class="px-2"
               >
@@ -185,13 +238,13 @@
               </v-tab>
             </v-tabs>
 
-            <v-tabs-items v-model="ui_control.ebas_curr_tab">
+            <v-tabs-items v-model="ui_control.dehm_curr_tab">
               <v-tab-item
-                v-for="fn in app_data.ebas_plot_case.length + 1"
+                v-for="fn in app_data.dehm_plot_case.length + 1"
                 :key="fn"
               >
                 <div
-                  :id="'ebas_viz_plot_' + fn"
+                  :id="'dehm_viz_plot_' + fn"
                   :style="`height: ${plot_height}px`"
                 ></div>
               </v-tab-item>
@@ -208,11 +261,12 @@ import { mapState, mapMutations } from "vuex";
 import PlotCase from "@/app_class/plot_case";
 
 export default {
-  name: "ebas_plot",
+  name: "dehm_plot",
   data: () => ({
     isLoading: false,
-    selected_site: [],
+    selected_project_case: [],
     selected_component: [],
+    selected_group: [],
     list_height: 300,
     plot_height: 600,
     avg_types: ["Hourly", "Daily", "Monthly", "None"],
@@ -227,8 +281,10 @@ export default {
     trend_type_selected: "None",
     gathering_method: 0,
     gathering_methods: ["None", "Mean", "Median", "Max", "Min"],
-    is_select_all_site: false,
+    is_select_all_project_case: false,
     is_select_all_component: false,
+    is_select_all_group: false,
+    use_var: false,
   }),
   mounted() {
     this.add_plot();
@@ -245,27 +301,25 @@ export default {
           : this.ui_control.fig_type_1;
       return fig_type;
     },
-    site_index() {
-      if (this.app_data.ebas.data == null) return [];
-      let site = this.app_data.ebas.data.data.map((x) => x.site);
-      site = [...new Set(site)];
-      return site;
+    project_case() {
+      if (this.app_data.dehm.project_list == null) return [];
+      return Object.keys(this.app_data.dehm.project_list);
     },
     component_index() {
-      if (this.app_data.ebas.data == null) return [];
-      let component = this.app_data.ebas.data.data.map((x) => x.component);
-      component = [...new Set(component)];
-      return component;
+      return this.ui_control.components;
+    },
+    group_index() {
+      return this.app_data.user.c_groups;
     },
   },
   methods: {
     ...mapMutations(["SET_MESSAGE"]),
 
-    select_all_site() {
-      if (this.is_select_all_site) {
-        this.selected_site = this.site_index;
+    select_all_project_case() {
+      if (this.is_select_all_project_case) {
+        this.selected_project_case = this.project_case;
       } else {
-        this.selected_site = [];
+        this.selected_project_case = [];
       }
     },
     select_all_component() {
@@ -275,52 +329,89 @@ export default {
         this.selected_component = [];
       }
     },
+    select_all_group() {
+      if (this.is_select_all_group) {
+        this.selected_group = this.group_index;
+      } else {
+        this.selected_group = [];
+      }
+    },
     async add_plot() {
       var plot = this.ui_control.plot_default;
-      plot.layout.title = `EBAS data ${
-        this.app_data.ebas_plot_case.length + 1
+      plot.layout.title = `DEHM Case ${
+        this.app_data.dehm_plot_case.length + 1
       }`;
       plot.fig_type = this.fig_type_selected;
-      plot.layout.width = this.$refs.ebas_viz_canvas.clientWidth;
+      plot.layout.width = this.$refs.dehm_viz_canvas.clientWidth;
       plot.layout.height = this.plot_height;
-      plot.div = `ebas_viz_plot_${this.app_data.ebas_plot_case.length + 1}`;
-      this.app_data.ebas_plot_case.push(new PlotCase(plot));
+      plot.div = `dehm_viz_plot_${this.app_data.dehm_plot_case.length + 1}`;
+      this.app_data.dehm_plot_case.push(new PlotCase(plot));
 
-      this.ui_control.ebas_curr_tab = this.app_data.ebas_plot_case.length - 1;
-      // console.log(this.app_data.ebas_plot_case, this.ui_control.ebas_curr_tab);
+      this.ui_control.dehm_curr_tab = this.app_data.dehm_plot_case.length - 1;
+      // console.log(this.app_data.dehm_plot_case, this.ui_control.dehm_curr_tab);
       await this.$nextTick();
       await this.$nextTick();
-      let index = this.ui_control.ebas_curr_tab;
-      this.app_data.ebas_plot_case[index].plot_new();
+      let index = this.ui_control.dehm_curr_tab;
+      this.app_data.dehm_plot_case[index].plot_new();
     },
 
     async new_plot() {
       this.ui_control.isloading = true;
-      let index = this.ui_control.ebas_curr_tab;
-      await this.app_data.ebas_plot_case[index].plot_figure(
-        this.app_data.ebas.data.data,
-        this.selected_site,
-        this.selected_component,
-        this.gathering_methods[this.gathering_method],
-        null, // this will be unit convert
-        this.avg_type_selected
+
+      let case_list = this.selected_project_case;
+      var response;
+      var var_list = [];
+      var unit_list = [];
+      if (this.use_var) {
+        var_list = this.selected_component.map((x) => x.c);
+
+        // replace unit
+        var unit_rep = this.app_data.rep;
+        unit_list = this.selected_component.map(
+          (x) => unit_rep[this.app_data.user.components[x.c]["target_unit"][0]]
+        );
+
+        response = await this.app_data.dehm.query_components(
+          case_list,
+          var_list,
+          unit_list,
+          this.gathering_methods[this.gathering_method],
+          this.avg_type_selected,
+          this.app_data.user.create_form(),
+          this.app_data.headers
+        );
+      } else {
+        // query_groups
+        console.log(this.selected_group);
+      }
+
+      this.SET_MESSAGE(response);
+
+      console.log(response.data.data);
+
+      var trace_data = await this.app_data.dehm.convert2trace(
+        response.data.data,
+        unit_rep
       );
+      console.log(trace_data);
+      let index = this.ui_control.dehm_curr_tab;
+      await this.app_data.dehm_plot_case[index].plot_figure_simple(trace_data);
       await this.change_trend_type();
       this.ui_control.isloading = false;
     },
 
     del_plot(n) {
       // console.log(n)
-      this.app_data.ebas_plot_case.splice(n - 1, 1);
-      if (this.app_data.ebas_plot_case.length == 0){
-        this.add_plot()
+      this.app_data.dehm_plot_case.splice(n - 1, 1);
+      if (this.app_data.dehm_plot_case.length == 0) {
+        this.add_plot();
       }
     },
 
     async change_fig_type() {
-      let index = this.ui_control.ebas_curr_tab;
+      let index = this.ui_control.dehm_curr_tab;
       let fig_type = this.fig_type_selected;
-      this.app_data.ebas_plot_case[index].set_fig_type(fig_type);
+      this.app_data.dehm_plot_case[index].set_fig_type(fig_type);
 
       await this.new_plot();
     },
@@ -328,10 +419,10 @@ export default {
     async update_plot() {},
     async change_trend_type() {
       this.ui_control.isloading = true;
-      let index = this.ui_control.ebas_curr_tab;
+      let index = this.ui_control.dehm_curr_tab;
       if (this.trend_type_selected != "None") {
-        if (this.app_data.ebas_plot_case[index].trace_layout.trace.length > 0) {
-          await this.app_data.ebas_plot_case[index].plot_trend(
+        if (this.app_data.dehm_plot_case[index].trace_layout.trace.length > 0) {
+          await this.app_data.dehm_plot_case[index].plot_trend(
             this.trend_type_selected
           );
         }
@@ -349,7 +440,4 @@ export default {
   background-color: #555555;
   height: 25px;
 }
-// #ebas_viz_plot {
-//   border-style: dotted;
-// }
 </style>

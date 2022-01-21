@@ -19,7 +19,15 @@ export default class extends Figure {
       trace = await this.data.gathering(trace, component, gathering)
       this.trace_data = await this.data.averaging(trace, averaging)
 
-      this.trace = await this.gene_trace(this.trace_data, this.color_theme)
+      this.trace_layout = await this.gene_trace(this.trace_data, this.color_theme)
+      await this.plot_new()
+
+      return Promise.resolve(1)
+   }
+
+   async plot_figure_simple(trace_data) {
+      this.trace_data = trace_data
+      this.trace_layout = await this.gene_trace(this.trace_data, this.color_theme)
       await this.plot_new()
 
       return Promise.resolve(1)
@@ -32,8 +40,8 @@ export default class extends Figure {
 
       this.trend_data = await this.data.gene_trend(this.trace_data, { method: trend_type, options: options })
       this.trend_trace = await this.gene_trend_trace(this.trend_data, this.color_theme)
-      console.log(this.trend_trace)
-      this.add_trace(this.trend_trace)
+      // console.log(this.trend_trace)
+      this.add_trace(this.trend_trace.trace)
    }
 
    set_color_theme(colors) {
