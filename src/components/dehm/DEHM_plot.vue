@@ -358,46 +358,57 @@ export default {
     async new_plot() {
       this.ui_control.isloading = true;
 
-      let case_list = this.selected_project_case;
-      var response;
-      var var_list = [];
-      var unit_list = [];
-      if (this.use_var) {
-        var_list = this.selected_component.map((x) => x.c);
-
-        // replace unit
-        var unit_rep = this.app_data.rep;
-        unit_list = this.selected_component.map(
-          (x) => unit_rep[this.app_data.user.components[x.c]["target_unit"][0]]
+      let confirm_plot = true;
+      if (this.gathering_methods[this.gathering_method] == "None") {
+        confirm_plot = confirm(
+          "All the EBAS sites will be plotted, this will be very slow"
         );
-
-        response = await this.app_data.dehm.query_components(
-          case_list,
-          var_list,
-          unit_list,
-          this.gathering_methods[this.gathering_method],
-          this.avg_type_selected,
-          this.app_data.user.create_form(),
-          this.app_data.headers
-        );
-      } else {
-        // query_groups
-        console.log(this.selected_group);
       }
 
-      this.SET_MESSAGE(response);
+      if (confirm_plot) {
+        let case_list = this.selected_project_case;
+        var response;
+        var var_list = [];
+        var unit_list = [];
+        if (this.use_var) {
+          var_list = this.selected_component.map((x) => x.c);
 
-      console.log(response.data.data);
+          // replace unit
+          var unit_rep = this.app_data.rep;
+          unit_list = this.selected_component.map(
+            (x) =>
+              unit_rep[this.app_data.user.components[x.c]["target_unit"][0]]
+          );
+          response = await this.app_data.dehm.query_components(
+            case_list,
+            var_list,
+            unit_list,
+            this.gathering_methods[this.gathering_method],
+            this.avg_type_selected,
+            this.app_data.user.create_form(),
+            this.app_data.headers
+          );
+        } else {
+          // query_groups
+          console.log(this.selected_group);
+        }
 
-      var trace_data = await this.app_data.dehm.convert2trace(
-        response.data.data,
-        unit_rep
-      );
-      console.log(trace_data);
-      let index = this.ui_control.dehm_curr_tab;
-      await this.app_data.dehm_plot_case[index].plot_figure_simple(trace_data);
-      await this.change_trend_type();
-      this.ui_control.isloading = false;
+        this.SET_MESSAGE(response);
+
+        console.log(response.data.data);
+
+        var trace_data = await this.app_data.dehm.convert2trace(
+          response.data.data,
+          unit_rep
+        );
+        console.log(trace_data);
+        let index = this.ui_control.dehm_curr_tab;
+        await this.app_data.dehm_plot_case[index].plot_figure_simple(
+          trace_data
+        );
+        await this.change_trend_type();
+        this.ui_control.isloading = false;
+      }
     },
 
     del_plot(n) {

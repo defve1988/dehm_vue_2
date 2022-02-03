@@ -53,6 +53,7 @@ export default {
   watch: {},
 };
 </script>
+
 <style lang="scss">
 html {
   scroll-behavior: smooth;

@@ -94,7 +94,7 @@ const state = {
          text: "TS-Scatter-Line",
          val: "ts_scatter",
          mode: "lines+markers",
-         error: false,
+         error: true,
       },
       { text: "TS-Bar", val: "ts_bar", mode: "overlay", error: false },
       { text: "Scatter", val: "scatter", mode: "markers", error: false },

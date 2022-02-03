@@ -37,6 +37,7 @@ export default class extends DEHMCase {
          }
       }
 
+      console.log("ts", ts)
       return Promise.resolve(ts)
    }
 }

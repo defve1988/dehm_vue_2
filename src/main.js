@@ -10,7 +10,6 @@ import DEHM from "@/app_class/dehm";
 
 Vue.config.productionTip = false
 
-
 import axios from 'axios'
 // NOTE: as a proxy is used, the baseURL is still 'http://localhost:8080'
 // var env = 'loacl';
