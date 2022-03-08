@@ -71,6 +71,29 @@
                   :dark="ui_control.theme.brightness <= 50"
                 ></v-combobox>
               </v-col>
+
+              <v-col cols="6">
+                <v-combobox
+                  v-model="grid_type"
+                  :items="grid_types"
+                  label="Grid Type"
+                  outlined
+                  dense
+                  :dark="ui_control.theme.brightness <= 50"
+                ></v-combobox>
+              </v-col>
+
+              <v-col cols="6">
+                <v-text-field
+                  v-model="nlayer"
+                  label="Output Verticle Layers (only for daily runs)"
+                  :dark="ui_control.theme.brightness <= 50"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+
+
+            <v-row>
               <v-col cols="3">
                 <v-btn
                   class="mx-3"
@@ -113,8 +136,7 @@
           <v-icon :dark="ui_control.theme.dark" class="ma-2">
             mdi-coffee
           </v-icon>
-          Take a break. This will take ~5 minutes per month if no files were
-          generated.
+          Take a break. This will take ~5 minutes per month if no files were generated.
 
           <v-btn icon x-small @click="isLoading = false">
             <v-icon>mdi-close</v-icon>
@@ -155,13 +177,16 @@ import { mapState, mapMutations } from "vuex";
 export default {
   name: "ebas_query",
   data: () => ({
-    project_name: "novana",
-    case_name: "novana2021",
-    model_out_dir: "/nfsdata2/jc/novana_out/novana2021",
+    project_name: "Exhaustion",
+    case_name: "run1",
+    model_out_dir: "/nfsdata4/jc/exhaustion/reanalyse",
     file_type: "monthly",
-    file_types: ["monthly", "dayily"],
-    st: "2018-5-1",
-    ed: "2018-5-30",
+    file_types: ["monthly", "daily","annual_daily"],
+    grid_type: "mgrid",
+    grid_types: ["mgrid","latlon"],
+    nlayer:1,
+    st: "1981-1-1",
+    ed: "1981-1-31",
     isLoading: false,
     show_table: false,
     table_head: [],
@@ -189,6 +214,8 @@ export default {
         file_type: this.file_type,
         st: this.st,
         ed: this.ed,
+        grid_type:this.grid_type,
+        nlayer:this.nlayer,
       });
     },
     async generate_dehm() {

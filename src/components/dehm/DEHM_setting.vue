@@ -18,7 +18,9 @@
                 Case Name: {{ item.casename }} <br />
                 Output File Type: {{ item.file_type }} <br />
                 Date: {{ item.st }} to {{ item.ed }} <br />
-                Model Output directory : {{ item.model_outdir }} <br />
+                Model Output directory: {{ item.model_outdir }} <br />
+                Grid Type: {{ item.grid_type }} <br />
+                Output Vertical Layers (ignore for monthly runs): {{ item.nlayer }} <br />
               </v-list-item-content>
               <v-list-item-action>
                 <v-btn icon text @click="del_case(i)">
@@ -43,23 +45,10 @@
                 Case Name: {{ item.casename }} <br />
                 Output File Type: {{ item.file_type }} <br />
                 Model Output Directory : {{ item.model_outdir }} <br />
-
-                <v-expansion-panels accordion flat dense>
-                  <v-expansion-panel>
-                    <v-expansion-panel-header class="ma-0 pa-0"
-                      >Processed Periods:
-                      {{ item.month.length }}
-                    </v-expansion-panel-header>
-                    <v-expansion-panel-content>
-                      <div
-                        v-for="(m, m_index) in item.month"
-                        :key="'month_' + m_index"
-                      >
-                        {{ m }}
-                      </div>
-                    </v-expansion-panel-content>
-                  </v-expansion-panel>
-                </v-expansion-panels>
+                Grid Type: {{ item.grid_type }} <br />
+                Output Vertical Layers (ignore for monthly runs): {{ item.nlayer }} <br />
+                Start Date: {{ item.date_start }} <br />
+                End Date: {{ item.date_end }} <br />
 
                 <v-expansion-panels accordion flat dense>
                   <v-expansion-panel>
